@@ -1,0 +1,20 @@
+{
+  "profile_id": "sample_domain_rules",
+  "domain_name": "Sample Domain Validation Profile",
+  "description": "Domain-specific real-time linter and validation rules",
+  "rules": [
+    {
+      "id": "RULE-KEYWORD-REQUIRED",
+      "severity": "Warning",
+      "trigger_keywords": ["required_field_trigger", "mandatory_clause"],
+      "condition": "document.has_required_item == false",
+      "message": "Mandatory clause requirement: Ensure required affiliation or contextual details are stated."
+    },
+    {
+      "id": "RULE-RESTRICTED-USAGE",
+      "severity": "Error",
+      "trigger_keywords": ["prohibited_term", "deprecated_phrase", "unauthorized_keyword"],
+      "message": "Restricted phrase error: This terminology is disallowed under domain compliance guidelines. Replace with canonical terminology."
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+# Node dependencies
+node_modules/
+package-lock.json
+
+# Local build and outputs (keep gitkeep)
+outputs/*
+!outputs/.gitkeep
+
+# Local user inputs (keep gitkeep)
+inputs/*
+!inputs/.gitkeep
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs & temp
+*.log
+npm-debug.log*
+.env

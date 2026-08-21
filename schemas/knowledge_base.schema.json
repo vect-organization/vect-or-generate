@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VectOrEditOr Knowledge Base Schema (kb_*.json)",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "vector"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Unique identifier for the knowledge entity."
+      },
+      "name": {
+        "type": "string",
+        "description": "Standard label or title."
+      },
+      "reading": {
+        "type": "string",
+        "description": "Phonetic reading in Hiragana."
+      },
+      "vector": {
+        "type": "array",
+        "description": "384-dimensional normalized float vector.",
+        "minItems": 384,
+        "maxItems": 384,
+        "items": {
+          "type": "number"
+        }
+      },
+      "template": {
+        "type": "string",
+        "description": "Optional snippet text to insert into the editor."
+      },
+      "metadata": {
+        "type": "object",
+        "description": "Arbitrary metadata key-values."
+      }
+    }
+  }
+}

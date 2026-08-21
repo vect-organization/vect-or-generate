@@ -1,0 +1,22 @@
+[
+  {
+    "id": "SAMPLE-DOMAIN-001",
+    "name": "Sample Entity Title",
+    "reading": "sample entity title",
+    "category": "Classification / Genre",
+    "text_for_vector": "Comprehensive descriptive text containing key terminology, context, and related concepts. This passage is transformed into a 384-dimensional vector embedding using the Multilingual E5 model.",
+    "description": "Detailed explanation displayed in Monaco Editor autocomplete cards or search previews.",
+    "template": "Standard reusable snippet or clause inserted directly into the editor upon selection.",
+    "tags": ["standard", "sample"],
+    "custom_field_1": "Optional domain-specific attributes (e.g. codes, addresses, references)"
+  },
+  {
+    "id": "SAMPLE-DOMAIN-002",
+    "name": "Second Knowledge Entity",
+    "reading": "second knowledge entity",
+    "category": "Classification / Genre",
+    "text_for_vector": "Descriptive context passage for second knowledge entity covering specific domain rules and contextual triggers.",
+    "description": "Detailed explanation of the second entity.",
+    "tags": ["secondary"]
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "name": "vect-or-generate",
+  "version": "0.3.0",
+  "description": "10-Layer Semantic Knowledge & Vector Dictionary Generator for VectOrEditOr",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "vect-or-generate": "./bin/cli.mjs"
+  },
+  "scripts": {
+    "generate": "node bin/cli.mjs",
+    "test": "node bin/cli.mjs --input templates/domain_data.template.json --output outputs/kb_test.json --dry-run"
+  },
+  "keywords": [
+    "vect-or-editor",
+    "vector-search",
+    "knowledge-base",
+    "embeddings",
+    "multilingual-e5",
+    "semantic-web",
+    "dikwp",
+    "w3c"
+  ],
+  "author": "1abcdefggs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1abcdefggs/vect-or-generate.git"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.2.0"
+  }
+}
