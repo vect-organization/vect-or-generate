@@ -1,4 +1,4 @@
-# VectOrEditOr 10-Layer Semantic Architecture & Base Specification
+# VectOrg 10-Layer Semantic Architecture & Base Specification
 
 **Version**: 1.0.0  
 **Compliance**: W3C Semantic Web Stack / Ontology Spectrum / DIKWP Model  
@@ -9,7 +9,7 @@
 
 ## 1. 10-Layer Semantic Knowledge Hierarchy
 
-VectOrEditOr operates by separating and synthesizing goals and domain knowledge based on the international 10-layer semantic architecture:
+VectOrEdit operates by separating and synthesizing goals and domain knowledge based on the international 10-layer semantic architecture:
 
 ```
 【 Pragmatic / Purpose Level 】
@@ -58,18 +58,38 @@ VectOrEditOr operates by separating and synthesizing goals and domain knowledge 
 ## 3. Standard Knowledge Base JSON Schema (`kb_{domain}.json`)
 
 ```json
-[
-  {
-    "id": "Unique identifier (string: e.g. 'LEGAL-001', 'MED-F01')",
-    "name": "Canonical term / title / label (string)",
-    "reading": "Phonetic reading in Hiragana or Romanized alphabet (string: optional)",
-    "text_for_vector": "Text passage evaluated for 384-dim vector embedding (string: required)",
-    "vector": [ 0.0123, -0.0456, ... /* 384-dim normalized Float32 array */ ],
-    "template": "Snippet text inserted into editor upon selection (string: optional)",
-    "metadata": {
-      "category": "Classification tag (string: optional)",
-      "tags": ["tag1", "tag2"]
+{
+  "domain": "medical_psychiatry",
+  "version": "0.3.0",
+  "prefix": "#",
+  "dimension": 384,
+  "metric": "cosine",
+  "is_sanitized": false,
+  "fidelity_score": 100.0,
+  "entities": [
+    {
+      "id": "#01",
+      "name": "Depression (Depressive Episode)",
+      "reading": "depression",
+      "definition": "A mood disorder characterized by persistent depressive mood, loss of interest or pleasure, and fatigue.",
+      "layer": 4,
+      "layerName": "L4 Semantic",
+      "category": "Mood Disorder",
+      "code": "ICD-10: F32",
+      "synonyms": ["Major Depressive Disorder", "Depressive State", "Melancholia"],
+      "inEditor": true,
+      "metadata": {
+        "source": {
+          "type": "official_guideline",
+          "title": "Clinical Practice Guidelines for Depression",
+          "url": "https://example.org/guidelines/depression.html",
+          "retrieved_at": "2026-08-22",
+          "raw_snippet": "Depression is a syndrome accompanied by disturbances in mood, motivation, and thinking..."
+        }
+      },
+      "vector": [ 0.0123, -0.0456, 0.0789, 0.0 /* 384-dim normalized Float32 array */ ]
     }
-  }
-]
+  ]
+}
 ```
+

@@ -1,22 +1,53 @@
-[
-  {
-    "id": "SAMPLE-DOMAIN-001",
-    "name": "Sample Entity Title",
-    "reading": "sample entity title",
-    "category": "Classification / Genre",
-    "text_for_vector": "Comprehensive descriptive text containing key terminology, context, and related concepts. This passage is transformed into a 384-dimensional vector embedding using the Multilingual E5 model.",
-    "description": "Detailed explanation displayed in Monaco Editor autocomplete cards or search previews.",
-    "template": "Standard reusable snippet or clause inserted directly into the editor upon selection.",
-    "tags": ["standard", "sample"],
-    "custom_field_1": "Optional domain-specific attributes (e.g. codes, addresses, references)"
-  },
-  {
-    "id": "SAMPLE-DOMAIN-002",
-    "name": "Second Knowledge Entity",
-    "reading": "second knowledge entity",
-    "category": "Classification / Genre",
-    "text_for_vector": "Descriptive context passage for second knowledge entity covering specific domain rules and contextual triggers.",
-    "description": "Detailed explanation of the second entity.",
-    "tags": ["secondary"]
-  }
-]
+{
+  "domain": "sample_domain",
+  "version": "0.3.0",
+  "prefix": "#",
+  "dimension": 384,
+  "metric": "cosine",
+  "is_sanitized": false,
+  "fidelity_score": 100,
+  "entities": [
+    {
+      "id": "#01",
+      "name": "Sample Knowledge Entity",
+      "reading": "sample entity",
+      "definition": "Comprehensive concept definition passage containing target domain terminology and key semantics to be transformed into a 384-dimensional vector embedding.",
+      "layer": 4,
+      "layerName": "L4 Semantic",
+      "category": "Classification / Genre",
+      "code": "SAMPLE-001",
+      "synonyms": [
+        "Sample Synonym",
+        "Alias Term",
+        "Alternate Label"
+      ],
+      "inEditor": true,
+      "metadata": {
+        "source": {
+          "type": "official_manual",
+          "title": "Standard Domain Reference Manual",
+          "url": "https://example.com/manual/sample.html",
+          "retrieved_at": "2026-08-22",
+          "raw_snippet": "Raw context passage extracted directly from original authoritative source..."
+        }
+      }
+    },
+    {
+      "id": "#02",
+      "name": "Second Knowledge Entity",
+      "reading": "second entity",
+      "definition": "Descriptive context passage for the second knowledge entity covering domain rules, procedures, and contextual triggers.",
+      "layer": 4,
+      "layerName": "L4 Semantic",
+      "category": "Secondary Classification",
+      "code": "SAMPLE-002",
+      "synonyms": [
+        "Alternative Name"
+      ],
+      "inEditor": false,
+      "metadata": {
+        "source": null
+      }
+    }
+  ]
+}

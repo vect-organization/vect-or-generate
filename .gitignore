@@ -9,6 +9,7 @@ outputs/*
 # Local user inputs (keep gitkeep)
 inputs/*
 !inputs/.gitkeep
+.agent
 
 # OS / Editor files
 .DS_Store
@@ -16,7 +17,14 @@ Thumbs.db
 .vscode/
 .idea/
 
+**/_*.md
+_*.md
+**/_*/
+_*/
+
 # Logs & temp
+
 *.log
 npm-debug.log*
 .env
+skills-lock.json

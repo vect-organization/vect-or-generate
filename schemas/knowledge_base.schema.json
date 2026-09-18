@@ -1,39 +1,154 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "VectOrEditOr Knowledge Base Schema (kb_*.json)",
-  "type": "array",
-  "items": {
-    "type": "object",
-    "required": ["id", "vector"],
-    "properties": {
-      "id": {
-        "type": "string",
-        "description": "Unique identifier for the knowledge entity."
-      },
-      "name": {
-        "type": "string",
-        "description": "Standard label or title."
-      },
-      "reading": {
-        "type": "string",
-        "description": "Phonetic reading in Hiragana."
-      },
-      "vector": {
-        "type": "array",
-        "description": "384-dimensional normalized float vector.",
-        "minItems": 384,
-        "maxItems": 384,
-        "items": {
-          "type": "number"
-        }
-      },
-      "template": {
-        "type": "string",
-        "description": "Optional snippet text to insert into the editor."
-      },
-      "metadata": {
+  "title": "VectOrg Knowledge Base Schema v0.3.0 (kb_*.json)",
+  "description": "Standard schema for VectOr 10-layer semantic knowledge bases with precomputed embeddings and provenance metadata.",
+  "type": "object",
+  "required": [
+    "domain",
+    "version",
+    "dimension",
+    "entities"
+  ],
+  "properties": {
+    "domain": {
+      "type": "string",
+      "description": "Domain identifier (e.g. 'medical_psychiatry', 'legal_civil')."
+    },
+    "version": {
+      "type": "string",
+      "description": "Knowledge Base schema version.",
+      "default": "0.3.0"
+    },
+    "prefix": {
+      "type": "string",
+      "description": "Entity ID prefix character.",
+      "default": "#"
+    },
+    "dimension": {
+      "type": "integer",
+      "description": "Vector embedding dimensions (e.g. 384 for E5-small).",
+      "default": 384
+    },
+    "metric": {
+      "type": "string",
+      "description": "Distance metric for vector search.",
+      "enum": [
+        "cosine",
+        "dot_product",
+        "euclidean"
+      ],
+      "default": "cosine"
+    },
+    "is_sanitized": {
+      "type": "boolean",
+      "description": "Whether raw source text and external URLs have been cleansed.",
+      "default": false
+    },
+    "fidelity_score": {
+      "type": "number",
+      "description": "Semantic retention fidelity percentage (0-100).",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 100
+    },
+    "entities": {
+      "type": "array",
+      "description": "Array of 10-layer semantic knowledge entities.",
+      "items": {
         "type": "object",
-        "description": "Arbitrary metadata key-values."
+        "required": [
+          "id",
+          "name",
+          "layer",
+          "vector"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the knowledge entity."
+          },
+          "name": {
+            "type": "string",
+            "description": "Canonical term, headword, or standard title."
+          },
+          "reading": {
+            "type": "string",
+            "description": "Phonetic reading in Hiragana or Romanized alphabet."
+          },
+          "definition": {
+            "type": "string",
+            "description": "Concept definition, explanation, or clinical criteria."
+          },
+          "layer": {
+            "type": "integer",
+            "description": "Semantic layer index (0 to 9).",
+            "minimum": 0,
+            "maximum": 9
+          },
+          "layerName": {
+            "type": "string",
+            "description": "Standard label of the layer (e.g. 'L4 Semantic', 'L1 Lemma')."
+          },
+          "category": {
+            "type": "string",
+            "description": "Domain taxonomy category or classification."
+          },
+          "code": {
+            "type": "string",
+            "description": "Standard classification code (e.g. 'ICD-10: F32')."
+          },
+          "synonyms": {
+            "type": "array",
+            "description": "Alternative terms, paraphrases, and colloquial expressions.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "inEditor": {
+            "type": "boolean",
+            "description": "Whether this entity is currently active in the editor context.",
+            "default": false
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Arbitrary metadata and provenance information.",
+            "properties": {
+              "source": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Source provenance detailing origin text, URL, and timestamp.",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "retrieved_at": {
+                    "type": "string"
+                  },
+                  "raw_snippet": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "vector": {
+            "type": "array",
+            "description": "Normalized float vector embedding.",
+            "minItems": 384,
+            "maxItems": 384,
+            "items": {
+              "type": "number"
+            }
+          }
+        }
       }
     }
   }

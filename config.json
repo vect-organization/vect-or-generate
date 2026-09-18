@@ -1,0 +1,8 @@
+{
+  "version": "0.3.3",
+  "dimension": 384,
+  "defaultModel": "Xenova/multilingual-e5-small",
+  "metric": "cosine",
+  "integrityAlgorithm": "SHA-256",
+  "repoUrl": "https://github.com/vect-organization/vect-or-edit"
+}

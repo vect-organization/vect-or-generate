@@ -1,21 +1,88 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "VectOrEditOr Guideline / Profile Schema (guideline_*.json)",
+  "title": "VectOrg Guideline & Linter Profile Schema v0.3.0 (guideline_*.json)",
+  "description": "Standard schema for VectOr dynamic validation guidelines, compliance checks, and real-time editor linter rules.",
   "type": "object",
+  "required": [
+    "domain",
+    "version",
+    "rules"
+  ],
   "properties": {
-    "name": { "type": "string" },
-    "version": { "type": "string" },
+    "domain": {
+      "type": "string",
+      "description": "Domain identifier (e.g. 'medical_psychiatry', 'legal_civil')."
+    },
+    "version": {
+      "type": "string",
+      "description": "Guideline schema version.",
+      "default": "0.3.0"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the guideline profile."
+    },
     "rules": {
       "type": "array",
+      "description": "List of linter verification rules.",
       "items": {
         "type": "object",
-        "required": ["id", "message", "severity"],
+        "required": [
+          "id",
+          "pattern",
+          "message",
+          "severity"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "pattern": { "type": "string" },
-          "message": { "type": "string" },
-          "severity": { "type": "string", "enum": ["error", "warning", "info"] },
-          "suggest": { "type": "string" }
+          "id": {
+            "type": "string",
+            "description": "Unique rule identifier (e.g. 'RULE-MED-001')."
+          },
+          "layer": {
+            "type": "integer",
+            "description": "Semantic layer index (typically 7 for L7 Linter or 9 for L9 Skeleton).",
+            "default": 7
+          },
+          "category": {
+            "type": "string",
+            "description": "Rule category (e.g. 'forbidden', 'contraindication', 'terminology', 'phrasing', 'compliance').",
+            "enum": [
+              "forbidden",
+              "contraindication",
+              "terminology",
+              "phrasing",
+              "compliance",
+              "style"
+            ]
+          },
+          "pattern": {
+            "type": "string",
+            "description": "Regular expression pattern or target string to match."
+          },
+          "message": {
+            "type": "string",
+            "description": "User-facing diagnostic message or compliance warning."
+          },
+          "severity": {
+            "type": "string",
+            "description": "Severity level for editor diagnostic decorations.",
+            "enum": [
+              "error",
+              "warning",
+              "info",
+              "hint"
+            ],
+            "default": "warning"
+          },
+          "suggest": {
+            "type": "string",
+            "description": "Recommended alternative term, correct phrase, or template snippet."
+          },
+          "autoFix": {
+            "type": "boolean",
+            "description": "Whether the editor can automatically apply the suggested fix.",
+            "default": false
+          }
         }
       }
     }
