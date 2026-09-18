@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="License: MIT" />
-  <img src="https://img.shields.io/badge/Version-0.3.2-indigo.svg?style=for-the-badge" alt="Version 0.3.2" />
+  <img src="https://img.shields.io/badge/Version-0.3.3-indigo.svg?style=for-the-badge" alt="Version 0.3.3" />
   <img src="https://img.shields.io/badge/Node.js-%3E%3D18.0.0-green.svg?style=for-the-badge" alt="Node.js >= 18.0.0" />
   <img src="https://img.shields.io/badge/AI_Model-Multilingual_E5-purple.svg?style=for-the-badge" alt="Multilingual E5 Small" />
   <img src="https://img.shields.io/badge/Vector_Dim-384--dim_Float32-critical.svg?style=for-the-badge" alt="384-dim Float32" />

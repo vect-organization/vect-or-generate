@@ -1,0 +1,347 @@
+[
+  {
+    "id": "#00001",
+    "name": "Secondary malignant neoplasm of larynx",
+    "reading": "secondary malignant neoplasm of larynx",
+    "definition": "Secondary malignant neoplasm of larynx",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: C7831",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00002",
+    "name": "Secondary malignant neoplasm of pharynx",
+    "reading": "secondary malignant neoplasm of pharynx",
+    "definition": "Secondary malignant neoplasm of pharynx",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: C7832",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00003",
+    "name": "Secondary malignant neoplasm of oral cavity",
+    "reading": "secondary malignant neoplasm of oral cavity",
+    "definition": "Secondary malignant neoplasm of oral cavity",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: C7983",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00004",
+    "name": "Glanzmann thrombasthenia",
+    "reading": "glanzmann thrombasthenia",
+    "definition": "Glanzmann thrombasthenia",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: D6911",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00005",
+    "name": "Other qualitative platelet defects",
+    "reading": "other qualitative platelet defects",
+    "definition": "Other qualitative platelet defects",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: D6919",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00006",
+    "name": "Post bariatric hypoglycemia",
+    "reading": "post bariatric hypoglycemia",
+    "definition": "Post bariatric hypoglycemia",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: E89830",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00007",
+    "name": "Other postprocedural hypoglycemia",
+    "reading": "other postprocedural hypoglycemia",
+    "definition": "Other postprocedural hypoglycemia",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: E89838",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00008",
+    "name": "Gender identity disorder, in remission",
+    "reading": "gender identity disorder, in remission",
+    "definition": "Gender identity disorder, in remission",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: F64A",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00009",
+    "name": "Familial-genetic dilated cardiomyopathy",
+    "reading": "familial-genetic dilated cardiomyopathy",
+    "definition": "Familial-genetic dilated cardiomyopathy",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: I4201",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00010",
+    "name": "Arrhythmogenic cardiomyopathy",
+    "reading": "arrhythmogenic cardiomyopathy",
+    "definition": "Arrhythmogenic cardiomyopathy",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: I4281",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00011",
+    "name": "Catecholaminergic polymorphic ventricular tachycardia [CPVT]",
+    "reading": "catecholaminergic polymorphic ventricular tachycardia [cpvt]",
+    "definition": "Catecholaminergic polymorphic ventricular tachycardia [CPVT]",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: I4722",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00012",
+    "name": "Brugada syndrome",
+    "reading": "brugada syndrome",
+    "definition": "Brugada syndrome",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: I4981",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00013",
+    "name": "Ventricular bigeminy",
+    "reading": "ventricular bigeminy",
+    "definition": "Ventricular bigeminy",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: I4982",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00014",
+    "name": "VEXAS syndrome",
+    "reading": "vexas syndrome",
+    "definition": "VEXAS syndrome",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: M043",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00015",
+    "name": "Loeys-Dietz syndrome",
+    "reading": "loeys-dietz syndrome",
+    "definition": "Loeys-Dietz syndrome",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: Q87A",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00016",
+    "name": "Lynch syndrome",
+    "reading": "lynch syndrome",
+    "definition": "Lynch syndrome",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: QA171",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00017",
+    "name": "Familial cancer syndrome with pathogenic BRCA1 mutation",
+    "reading": "familial cancer syndrome with pathogenic brca1 mutation",
+    "definition": "Familial cancer syndrome with pathogenic BRCA1 mutation",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: QA1790",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00018",
+    "name": "Familial cancer syndrome with pathogenic BRCA2 mutation",
+    "reading": "familial cancer syndrome with pathogenic brca2 mutation",
+    "definition": "Familial cancer syndrome with pathogenic BRCA2 mutation",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: QA1791",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00019",
+    "name": "Li Fraumeni syndrome",
+    "reading": "li fraumeni syndrome",
+    "definition": "Li Fraumeni syndrome",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: QA1792",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00020",
+    "name": "Contact with and (suspected) exposure to burn pits in war theater",
+    "reading": "contact with and (suspected) exposure to burn pits in war theater",
+    "definition": "Contact with and (suspected) exposure to burn pits in war theater",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: Z7732",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00021",
+    "name": "Contact with and (suspected) exposure to Agent Orange",
+    "reading": "contact with and (suspected) exposure to agent orange",
+    "definition": "Contact with and (suspected) exposure to Agent Orange",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: Z7733",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00022",
+    "name": "Contact with and (suspected) exposure to low-level blast overpressure",
+    "reading": "contact with and (suspected) exposure to low-level blast overpressure",
+    "definition": "Contact with and (suspected) exposure to low-level blast overpressure",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: Z7741",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  },
+  {
+    "id": "#00023",
+    "name": "Personal history of gender detransition",
+    "reading": "personal history of gender detransition",
+    "definition": "Personal history of gender detransition",
+    "layer": 4,
+    "layerName": "L4 Semantic",
+    "code": "ICD-10-CM: Z87893",
+    "synonyms": [],
+    "inEditor": true,
+    "metadata": {
+      "source": "CDC FY2027 Addenda"
+    },
+    "vector": []
+  }
+]

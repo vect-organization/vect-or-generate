@@ -1,7 +1,7 @@
 {
   "name": "vect-or-generate",
-  "version": "0.3.0",
-  "description": "10-Layer Semantic Knowledge & Vector Dictionary Generator for VectOrEditOr",
+  "version": "0.3.3",
+  "description": "10-Layer Semantic Knowledge & Vector Dictionary Generator for VectOrEdit",
   "type": "module",
   "main": "index.js",
   "bin": {
@@ -9,7 +9,15 @@
   },
   "scripts": {
     "generate": "node bin/cli.mjs",
-    "test": "node bin/cli.mjs --input templates/domain_data.template.json --output outputs/kb_test.json --dry-run"
+    "init:secret": "node scripts/init-secret.js",
+    "postinstall": "npm run init:secret",
+    "test": "node tests/compiler.test.mjs && node tests/privacy.test.mjs && node tests/inference.test.mjs && node tests/packager.test.mjs && node tests/csvParser.test.mjs && node tests/vault.test.mjs && node bin/cli.mjs --input templates/domain_data.template.json --output outputs/kb_test.json --dry-run",
+    "test:unit": "node tests/compiler.test.mjs && node tests/privacy.test.mjs && node tests/inference.test.mjs && node tests/packager.test.mjs && node tests/csvParser.test.mjs && node tests/vault.test.mjs",
+    "studio": "npm run dev --prefix studio",
+    "build:studio": "npm run build --prefix studio",
+    "lint:studio": "npm run lint --prefix studio",
+    "sync": "node scripts/sync_config.mjs",
+    "report:arch": "node scripts/generate_architecture_report.mjs"
   },
   "keywords": [
     "vect-or-editor",
@@ -31,6 +39,8 @@
     "@types/node": "^26.1.2"
   },
   "dependencies": {
-    "@huggingface/transformers": "^4.2.0"
+    "@huggingface/transformers": "^4.2.0",
+    "dotenv": "^17.4.2",
+    "hash-wasm": "^4.12.0"
   }
 }
