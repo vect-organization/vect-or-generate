@@ -1,0 +1,47 @@
+[
+  {
+    "id": "hipaa_strict",
+    "displayName": "HIPAA Strict Medical Sanitization",
+    "description": "Maximum clinical privacy: Strips all source URLs/snippets, applies Laplace DP noise (eps=0.08), and auto-boosts singularity outliers.",
+    "stripProvenance": true,
+    "anonymizeSyntax": true,
+    "shuffleIdentifiers": true,
+    "injectNoise": true,
+    "mechanism": "laplace",
+    "epsilon": 0.08,
+    "boostSingularity": true,
+    "singularityBoostMultiplier": 1.5,
+    "baselineFidelity": 92.5,
+    "baselinePrivacy": 98.8
+  },
+  {
+    "id": "balanced_oss",
+    "displayName": "Balanced Open-Source Release",
+    "description": "Balanced for public distribution: Strips provenance, applies Spherical Tangent Gaussian DP (eps=0.04), preserving 97%+ semantic search fidelity.",
+    "stripProvenance": true,
+    "anonymizeSyntax": false,
+    "shuffleIdentifiers": true,
+    "injectNoise": true,
+    "mechanism": "spherical_gaussian",
+    "epsilon": 0.04,
+    "boostSingularity": true,
+    "singularityBoostMultiplier": 1.25,
+    "baselineFidelity": 97.4,
+    "baselinePrivacy": 95.0
+  },
+  {
+    "id": "research_light",
+    "displayName": "Internal Research & Development",
+    "description": "High-fidelity mode: Retains internal provenance references, adds minimal tangent jitter (eps=0.01) maintaining 99%+ cosine similarity.",
+    "stripProvenance": false,
+    "anonymizeSyntax": false,
+    "shuffleIdentifiers": false,
+    "injectNoise": true,
+    "mechanism": "spherical_gaussian",
+    "epsilon": 0.01,
+    "boostSingularity": false,
+    "singularityBoostMultiplier": 1.0,
+    "baselineFidelity": 99.2,
+    "baselinePrivacy": 78.0
+  }
+]
