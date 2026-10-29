@@ -1,0 +1,50 @@
+{
+  "domain": "psychiatry_lexicon",
+  "taxonomyCode": "ICD-10",
+  "recordsPath": "",
+  "fields": {
+    "id": "id",
+    "name": "見出し語",
+    "reading": "よみ",
+    "definition": "解説",
+    "synonyms": "別名",
+    "code": "ICD",
+    "category": "分類"
+  },
+  "layer": 4,
+  "vectorText": ["name", "synonyms", "english", "definition"],
+  "metadata": {
+    "area": "領域",
+    "english": "英語",
+    "icdCategory": "カテゴリー",
+    "medisCode": "MEDISコード",
+    "diagnosticPoints": "診断要点",
+    "keyItems": "疾患別重要項目",
+    "relations": "関係",
+    "documents": "書類対応",
+    "examples": "記載例"
+  },
+  "renameKeys": {
+    "医療保護": "involuntaryAdmission",
+    "年金": "pension",
+    "自立": "independenceSupport",
+    "手帳": "welfareHandbook",
+    "種別": "kind",
+    "確度": "confidence",
+    "欄": "fields",
+    "上位": "broader",
+    "下位": "narrower",
+    "関連": "related",
+    "推奨検査": "recommendedTests",
+    "重要症状": "keySymptoms"
+  },
+  "ruleSources": [
+    {
+      "dir": "criteria",
+      "rules": {
+        "typo_check": { "severity": "warning", "category": "typo" },
+        "no_jargon": { "severity": "warning", "category": "abbreviation", "minLength": 3 }
+      }
+    }
+  ]
+}

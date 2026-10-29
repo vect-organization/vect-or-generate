@@ -17,14 +17,22 @@ const version = config.version || '0.3.0';
  * @param {Object} [options={}]
  * @param {string} [options.domain='general']
  * @param {string} [options.taxonomyCode='Standard']
+ * @param {Array<Object>} [options.extraRules=[]] - Rules to append as they are (id, pattern, message, severity, ...)
  * @returns {Object} Guideline profile object
  */
 export function generateLinterGuideline(entities, options = {}) {
-    const { domain = 'general', taxonomyCode = 'Standard' } = options;
+    const { domain = 'general', taxonomyCode = 'Standard', extraRules = [] } = options;
 
     const rules = [];
     const synonymMap = {};
     const categories = new Set();
+
+    // A synonym that is itself a headword, or that belongs to several headwords, has no single preferred term
+    const headwords = new Set(entities.map((item) => item.name));
+    const synonymOwners = new Map();
+    for (const item of entities) {
+        for (const syn of item.synonyms || []) synonymOwners.set(syn, (synonymOwners.get(syn) || 0) + 1);
+    }
 
     for (const item of entities) {
         if (item.category) categories.add(item.category);
@@ -32,6 +40,7 @@ export function generateLinterGuideline(entities, options = {}) {
         // 1. Synonym Warning Rules (Terminology Standardization)
         if (Array.isArray(item.synonyms) && item.synonyms.length > 0) {
             for (const syn of item.synonyms) {
+                if (!syn || syn === item.name || headwords.has(syn) || synonymOwners.get(syn) > 1) continue;
                 synonymMap[syn] = item.name;
                 rules.push({
                     id: `SYN-${item.id.replace('#', '')}-${syn.replace(/\s+/g, '_')}`,
@@ -40,6 +49,7 @@ export function generateLinterGuideline(entities, options = {}) {
                     facet: 'G.policy',
                     pattern: syn,
                     preferredTerm: item.name,
+                    suggest: item.name, // the field the engine reads (vect-or-engine profile.rs GuidelineRule)
                     message: `Consider using standard term '${item.name}' instead of synonym '${syn}'.`,
                     layer: item.layer ?? 4
                 });
@@ -59,6 +69,12 @@ export function generateLinterGuideline(entities, options = {}) {
                 layer: 7
             });
         }
+    }
+
+    // Rules from outside the entity list (e.g. a source's term rules), already in the guideline rule shape
+    for (const rule of extraRules) {
+        rules.push(rule);
+        if (rule.category) categories.add(rule.category);
     }
 
     return {

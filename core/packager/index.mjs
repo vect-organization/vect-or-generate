@@ -19,6 +19,7 @@ import { exportArtifactsToDisk, downloadArtifactFiles } from './bundleWriter.mjs
  * @param {string} [options.taxonomyCode='Standard'] - Taxonomy standard code
  * @param {string} [options.prefix='#'] - Entity ID prefix
  * @param {Object} [options.privacyAudit] - Privacy certification details
+ * @param {Array<Object>} [options.extraRules] - Guideline rules to append (see generateLinterGuideline)
  * @param {boolean} [options.dryRun=false] - Dry run flag
  * @returns {Promise<{ domain: string, version: string, itemCount: number, files: Object, checksums: Object }>}
  */
@@ -29,6 +30,7 @@ export async function packageArtifactBundle(options = {}) {
         taxonomyCode = 'Standard',
         prefix = '#',
         privacyAudit = null,
+        extraRules = [],
         dryRun = false
     } = options;
 
@@ -65,7 +67,8 @@ export async function packageArtifactBundle(options = {}) {
     const guidelineFileName = `guideline_${domain}.json`;
     files[guidelineFileName] = generateLinterGuideline(kbPayload.entities, {
         domain,
-        taxonomyCode
+        taxonomyCode,
+        extraRules
     });
 
     // 5. Generate ime_[domain].txt (TSV Dictionary)
