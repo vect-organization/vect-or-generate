@@ -3,6 +3,10 @@
 // Linter & Rule Profile Generator (guideline_[domain].json)
 
 import config from '../../config.json' with { type: 'json' };
+import { loadLegacyLayerSet } from '../registryLoader.mjs';
+
+// Shape version of guideline_*.json (schemas/guideline.schema.json), independent of the build version.
+const GUIDELINE_SCHEMA_VERSION = '0.4.0';
 
 const version = config.version || '0.3.0';
 
@@ -33,6 +37,7 @@ export function generateLinterGuideline(entities, options = {}) {
                     id: `SYN-${item.id.replace('#', '')}-${syn.replace(/\s+/g, '_')}`,
                     type: 'synonym_standardization',
                     severity: 'warning',
+                    facet: 'G.policy',
                     pattern: syn,
                     preferredTerm: item.name,
                     message: `Consider using standard term '${item.name}' instead of synonym '${syn}'.`,
@@ -47,6 +52,7 @@ export function generateLinterGuideline(entities, options = {}) {
                 id: `RULE-${item.id.replace('#', '')}`,
                 type: 'clinical_guideline',
                 severity: 'error',
+                facet: 'G.rule',
                 targetEntity: item.name,
                 code: item.code || 'L7-RULE',
                 message: item.definition || item.description || 'Clinical safety rule requirement.',
@@ -57,13 +63,14 @@ export function generateLinterGuideline(entities, options = {}) {
 
     return {
         domain,
-        version,
+        schemaVersion: GUIDELINE_SCHEMA_VERSION,
+        version, // DEPRECATED alias: build number of the generator, not the file shape
         taxonomyCode,
         generatedAt: new Date().toISOString(),
         totalRules: rules.length,
         categories: Array.from(categories),
         synonymMap,
-        requiredLayers: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        requiredLayers: [...loadLegacyLayerSet()].sort((a, b) => a - b), // derived from registry, not a hardcoded 0-9 range
         rules
     };
 }

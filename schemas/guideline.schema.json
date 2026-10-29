@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "VectOrg Guideline & Linter Profile Schema v0.3.0 (guideline_*.json)",
+  "title": "VectOrg Guideline & Linter Profile Schema v0.4.0 (guideline_*.json)",
   "description": "Standard schema for VectOr dynamic validation guidelines, compliance checks, and real-time editor linter rules.",
   "type": "object",
   "required": [
@@ -42,6 +42,11 @@
             "type": "integer",
             "description": "Semantic layer index (typically 7 for L7 Linter or 9 for L9 Skeleton).",
             "default": 7
+          },
+          "facet": {
+            "type": "string",
+            "description": "registry/facets.json G.* key (open; membership checked against the registry, not a schema enum). If omitted: severity error -> G.rule, otherwise G.policy.",
+            "pattern": "^G\\.[A-Za-z0-9_.-]+$"
           },
           "category": {
             "type": "string",
@@ -85,6 +90,10 @@
           }
         }
       }
+    },
+    "schemaVersion": {
+      "type": "string",
+      "description": "Shape version of this file (0.4.0+). `version` is the generator build number (deprecated alias)."
     }
   }
 }

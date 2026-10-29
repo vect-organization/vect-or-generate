@@ -1,0 +1,542 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://vect-organization/schemas/knowledge_base.schema.v2.json",
+  "title": "VectOrg Knowledge Base Schema v2.0 (kb_*.json)",
+  "description": "ADR-0005: 3-object (F.*/P.*/G.*) + registry model. Superset of v0.3.0 (entities[], flat) — both entities[] (legacy) and concepts[]/forms[] (new) may coexist during migration (Phase5). At least one of entities[] or concepts[] is required. New files SHOULD use concepts[] only; entities[] is read/write-compatible for tooling that has not migrated yet.",
+  "type": "object",
+  "required": [
+    "domain"
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "entities"
+      ]
+    },
+    {
+      "required": [
+        "concepts"
+      ]
+    }
+  ],
+  "properties": {
+    "domain": {
+      "type": "string",
+      "description": "Domain identifier (e.g. 'medical_psychiatry', 'legal_civil'). Unchanged from v0.3.0."
+    },
+    "schemaVersion": {
+      "type": "string",
+      "description": "Replaces v0.3.0's 'version' field. '0.3.0'=legacy flat, '2.0-draft'=migration in progress, '2.0'=concepts[] finalized for this file. v0.3.0 files that only carry `version` are accepted (treated as 0.3.0).",
+      "enum": [
+        "0.3.0",
+        "2.0-draft",
+        "2.0"
+      ],
+      "default": "2.0"
+    },
+    "version": {
+      "type": "string",
+      "description": "DEPRECATED alias of schemaVersion, kept for v0.3.0 reader compatibility. If both present, schemaVersion wins."
+    },
+    "prefix": {
+      "type": "string",
+      "description": "Entity/concept ID prefix character. Unchanged from v0.3.0.",
+      "default": "#"
+    },
+    "dimension": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "DEPRECATED single-dimension assumption from v0.3.0 (was: fixed 384). Kept only as the default/primary facet's dim for legacy readers; the authoritative per-facet dims live in concepts[].embeddings[].dim and registry/facets.json.",
+      "default": 384
+    },
+    "metric": {
+      "type": "string",
+      "description": "Distance metric for vector search. Unchanged from v0.3.0.",
+      "enum": [
+        "cosine",
+        "dot_product",
+        "euclidean"
+      ],
+      "default": "cosine"
+    },
+    "is_sanitized": {
+      "type": "boolean",
+      "description": "Whether raw source text and external URLs have been cleansed. Unchanged from v0.3.0.",
+      "default": false
+    },
+    "fidelity_score": {
+      "type": "number",
+      "description": "Semantic retention fidelity percentage (0-100), from core/privacy/metrics.mjs. Unchanged from v0.3.0.",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 100
+    },
+    "source": {
+      "type": "object",
+      "description": "Dataset-level provenance (F.provenance). New in v2, additive.",
+      "properties": {
+        "provenance": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "sample": {
+          "type": "boolean"
+        },
+        "sampleCount": {
+          "type": "integer"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "entities": {
+      "type": "array",
+      "description": "LEGACY v0.3.0 shape. Flat entity list, one item = one concept + one lemma + one embedding, no relations/senses/externalAlignment. New files should not add to this array; use concepts[]/forms[] instead. Retained so unmigrated readers/writers keep working during Phase5.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "layer"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the knowledge entity."
+          },
+          "name": {
+            "type": "string",
+            "description": "Canonical term, headword, or standard title."
+          },
+          "reading": {
+            "type": "string",
+            "description": "Phonetic reading in Hiragana or Romanized alphabet."
+          },
+          "definition": {
+            "type": "string",
+            "description": "Concept definition, explanation, or clinical criteria."
+          },
+          "layer": {
+            "type": "integer",
+            "description": "Semantic layer index (0 to 9). See registry/facets.json `legacy` field for the facet this maps to.",
+            "minimum": 0,
+            "maximum": 9
+          },
+          "layerName": {
+            "type": "string",
+            "description": "Standard label of the layer (e.g. 'L4 Semantic', 'L1 Lemma')."
+          },
+          "category": {
+            "type": "string",
+            "description": "Domain taxonomy category or classification."
+          },
+          "code": {
+            "type": "string",
+            "description": "Standard classification code (e.g. 'ICD-10: F32'). Migrates to concepts[].notations[]."
+          },
+          "synonyms": {
+            "type": "array",
+            "description": "Alternative terms, paraphrases, colloquial expressions. Migrates to concepts[].labels[] (kind=alt).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "inEditor": {
+            "type": "boolean",
+            "description": "DEPRECATED: editor-session UI state accidentally persisted into the compiled artifact. Does not belong in a build output; scheduled to move to vect-or-edit's own local state file. Kept optional for backward compatibility only, ignored by new tooling.",
+            "default": false
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Arbitrary metadata and provenance information.",
+            "properties": {
+              "source": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Source provenance. Migrates to concepts[].labels[].provenance (per-label) or concepts[].provenance (dataset-level).",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "retrieved_at": {
+                    "type": "string"
+                  },
+                  "raw_snippet": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "vector": {
+            "type": "array",
+            "description": "Normalized float vector embedding. v0.3.0 fixed this to 384; v2 no longer enforces a fixed length here (variable dimension, see ADR-0005). Migrates to concepts[].embeddings[0].vector. Optional at authoring time (pre-embedding input such as templates/domain_data.template.json); present after compileData().",
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "forms": {
+      "type": "array",
+      "description": "F.form: lexical entries (lemma-level), new in v2. Independent from concepts; linked via senses[].id. Optional even for v2 files (a concepts-only file with labels[] is valid).",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "writtenForm"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "writtenForm": {
+            "type": "string"
+          },
+          "reading": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                },
+                "variety": {
+                  "type": "string",
+                  "description": "e.g. 'GB'/'US'/'CA' dialect variant"
+                }
+              }
+            }
+          },
+          "pos": {
+            "type": "string"
+          },
+          "inflections": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "senses": {
+            "type": "array",
+            "description": "keys into concepts[].senses[].id",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "description": "F.concept: concept-centric core, new in v2. Each item is a superset of one v0.3.0 entity.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "notations",
+          "depth",
+          "labels"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "c:<scheme>:<value>"
+          },
+          "layer": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "LEGACY compatibility view only. Optional. Range is NOT bounded here; validator checks it against registry/facets.json `legacy` (non-exhaustive design)."
+          },
+          "notations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "scheme",
+                "value"
+              ],
+              "properties": {
+                "scheme": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string",
+                  "description": "Code-system release, e.g. 'FY2027' for ICD-10-CM (codes change every year; without this, the same value can mean different things)."
+                }
+              }
+            }
+          },
+          "broader": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "depth": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "category": {
+            "type": "string",
+            "description": "DEPRECATED v0.3.0 field, superseded by broader[]/relations[]. Kept for legacy readers."
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "kind",
+                "lang",
+                "text"
+              ],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "pref",
+                    "alt",
+                    "hidden"
+                  ]
+                },
+                "lang": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "literal": {
+                  "type": "boolean",
+                  "description": "false = idiomatic use where the written form and the actual referent diverge (e.g. 'green light' for a go signal that is not green)"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "provenance": {
+                  "type": "object",
+                  "properties": {
+                    "source": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "retrieved_at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "senses": {
+            "type": "array",
+            "description": "LMF Sense equivalent",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "definition"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "definition": {
+                  "type": "string"
+                },
+                "examples": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "register": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "relations": {
+            "type": "array",
+            "description": "generalized relation graph (SKOS broader/narrower + WordNet + ConceptNet)",
+            "items": {
+              "type": "object",
+              "required": [
+                "type",
+                "target"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_]*$",
+                  "description": "Relation type. Open vocabulary: registry/facets.json vocabularies.relationTypes (validated by core/validator.mjs)."
+                },
+                "target": {
+                  "type": "string"
+                },
+                "targetPos": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string",
+                  "description": "Origin of the edge: 'internal' or a vocabularies.externalSources value."
+                },
+                "weight": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "locale": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "externalAlignment": {
+            "type": "array",
+            "description": "links to external datasets, no data duplication",
+            "items": {
+              "type": "object",
+              "required": [
+                "source",
+                "confidence"
+              ],
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "description": "External dataset. Open vocabulary: registry/facets.json vocabularies.externalSources."
+                },
+                "synsetId": {
+                  "type": "string"
+                },
+                "uri": {
+                  "type": "string"
+                },
+                "wnid": {
+                  "type": "string"
+                },
+                "confidence": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              }
+            }
+          },
+          "embeddings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "facet"
+              ],
+              "properties": {
+                "facet": {
+                  "type": "string",
+                  "description": "registry/facets.json key, e.g. F.embedding.e5small"
+                },
+                "dim": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "modality": {
+                  "type": "string",
+                  "description": "e.g. 'text' / 'image'. Must match the facet's `modality` in registry/facets.json."
+                },
+                "normalized": {
+                  "type": "boolean"
+                },
+                "vector": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                "note": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "etymology": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "provenance": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "license": {
+                "type": "string"
+              }
+            }
+          },
+          "facet": {
+            "type": "string",
+            "pattern": "^[FPG]\\.[A-Za-z0-9_.-]+$",
+            "description": "registry/facets.json key (F.*/P.*/G.*). Membership is checked by core/validator.mjs, not by this schema."
+          },
+          "facetCandidates": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[FPG]\\.[A-Za-z0-9_.-]+$"
+            },
+            "description": "Set by migration when a legacy layer maps to >1 facet (e.g. L7 -> G.policy/G.rule); requires human resolution."
+          },
+          "legacy": {
+            "type": "object",
+            "description": "v0.3.0 fields with no v2 home (e.g. inEditor UI state, raw layerName). Preserved by migration, ignored by new tooling.",
+            "additionalProperties": true
+          },
+          "stub": {
+            "type": "boolean",
+            "description": "Synthesized node that closes the broader-hierarchy (e.g. ICD-10-CM category headers absent from the billable-codes file). Title to be filled from an authoritative source."
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "anyOf": [
+        {
+          "required": [
+            "schemaVersion"
+          ]
+        },
+        {
+          "required": [
+            "version"
+          ]
+        }
+      ]
+    }
+  ]
+}

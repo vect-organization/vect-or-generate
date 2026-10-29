@@ -15,7 +15,7 @@ let currentModelName = null;
  * @param {string} modelName - Hugging Face model ID (default: 'Xenova/multilingual-e5-small')
  * @returns {Promise<any>}
  */
-import config from '../../config.json' with { type: 'json' };
+import config from '../config.json' with { type: 'json' };
 export async function getExtractor(modelName = config.defaultModel) {
     if (cachedExtractor && currentModelName === modelName) {
         return cachedExtractor;
@@ -51,15 +51,19 @@ export async function embedPassages(texts, modelName = config.defaultModel) {
     if (!texts || texts.length === 0) return [];
     const extractor = await getExtractor(modelName);
     const prefixedTexts = texts.map(t => `passage: ${(t || '').trim()}`);
-    const output = await extractor(prefixedTexts, { pooling: 'mean', normalize: true });
-    
-    // Split output.data (flattened Float32Array of size N * 384) into N chunks of 384
+    // Small batches keep peak memory bounded (a single 195-text batch needs ~2.4 GB)
+    const BATCH_SIZE = 8;
     const dim = 384;
     const results = [];
-    const rawData = output.data;
-    for (let i = 0; i < texts.length; i++) {
-        const offset = i * dim;
-        results.push(Array.from(rawData.subarray(offset, offset + dim)));
+    for (let start = 0; start < prefixedTexts.length; start += BATCH_SIZE) {
+        const batch = prefixedTexts.slice(start, start + BATCH_SIZE);
+        const output = await extractor(batch, { pooling: 'mean', normalize: true });
+        // Split output.data (flattened Float32Array of size N * 384) into N chunks of 384
+        const rawData = output.data;
+        for (let i = 0; i < batch.length; i++) {
+            const offset = i * dim;
+            results.push(Array.from(rawData.subarray(offset, offset + dim)));
+        }
     }
     return results;
 }

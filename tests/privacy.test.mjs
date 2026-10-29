@@ -117,6 +117,66 @@ async function runTests() {
   console.log('  ✓ Passed\n');
 
   console.log('🎉 All Core Privacy TDD Seam Tests Passed Successfully!');
+
+  // --- Test 5: Regression - shuffleIdentifiers must not break outlier boost targeting ---
+  // (ADR-0005 Phase1.4 fix: detectSingularities used to run pre-shuffle while the
+  //  noise-injection step checked post-shuffle IDs, silently disabling the boost.)
+  console.log('Test 5: Outlier noise boost still targets the correct item after ID shuffle');
+  const normalize = (v) => {
+    const n = Math.sqrt(v.reduce((s, x) => s + x * x, 0)) || 1;
+    return v.map(x => x / n);
+  };
+  const clusterVec = normalize([0.9, 0.1, 0.05, 0.02]);
+  const outlierVec = normalize([-0.8, 0.9, -0.7, 0.85]); // far from the cluster -> should be flagged as singularity
+  const regressionEntities = [
+    { id: '#001', name: 'Cluster A', vector: clusterVec },
+    { id: '#002', name: 'Cluster B', vector: clusterVec.map(v => v * 0.98) },
+    { id: '#003', name: 'Cluster C', vector: clusterVec.map(v => v * 1.02) },
+    { id: '#OUTLIER', name: 'Outlier', vector: outlierVec },
+  ];
+
+  const displacement = (before, after) => {
+    let sum = 0;
+    for (let i = 0; i < before.length; i++) sum += (before[i] - after[i]) ** 2;
+    return Math.sqrt(sum);
+  };
+
+  async function meanOutlierDisplacement(shuffleIdentifiers, boostSingularity) {
+    const trials = 200;
+    let total = 0;
+    for (let t = 0; t < trials; t++) {
+      const { entities: out } = await applyPrivacyTransforms(regressionEntities, {
+        stripProvenance: false,
+        anonymizeSyntax: false,
+        shuffleIdentifiers,
+        injectNoise: true,
+        boostSingularity,
+        epsilon: 0.05,
+      });
+      const outlierAfter = out.find(e => e.name === 'Outlier');
+      total += displacement(outlierVec, outlierAfter.vector);
+    }
+    return total / trials;
+  }
+
+  const dispNoBoost = await meanOutlierDisplacement(false, false);
+  const dispBoostNoShuffle = await meanOutlierDisplacement(false, true);
+  const dispBoostWithShuffle = await meanOutlierDisplacement(true, true);
+
+  // Boost (1.5x epsilon) should measurably increase displacement over the
+  // no-boost baseline, AND this must hold whether or not IDs were shuffled.
+  // Before the fix, dispBoostWithShuffle collapsed to ~dispNoBoost because
+  // outlierIdSet (built from pre-shuffle entities) never matched any
+  // post-shuffle item.id, so the boost silently never applied when shuffle was on.
+  const boostRatioNoShuffle = dispBoostNoShuffle / dispNoBoost;
+  const boostRatioWithShuffle = dispBoostWithShuffle / dispNoBoost;
+  assert.ok(boostRatioNoShuffle > 1.15,
+    `Boost should raise displacement without shuffle (ratio=${boostRatioNoShuffle.toFixed(3)})`);
+  assert.ok(boostRatioWithShuffle > 1.15,
+    `Boost should raise displacement WITH shuffle too (ratio=${boostRatioWithShuffle.toFixed(3)}) — regression for the __origRef fix`);
+  console.log(`  ✓ Passed (noBoost=${dispNoBoost.toFixed(4)}, boost/no-shuffle=${dispBoostNoShuffle.toFixed(4)} x${boostRatioNoShuffle.toFixed(2)}, boost/shuffle=${dispBoostWithShuffle.toFixed(4)} x${boostRatioWithShuffle.toFixed(2)})\n`);
+
+  console.log('🎉 All Core Privacy TDD Seam Tests Passed Successfully (incl. regression)!');
 }
 
 runTests().catch((err) => {

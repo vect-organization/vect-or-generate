@@ -1,0 +1,161 @@
+{
+  "registryVersion": "1.1.0",
+  "note": "L10 (Intent) belongs to vect-or-edit / vect-or-engine and does not exist in this repository's SEMANTIC_LAYERS (0-9 only). It will be defined as a facet separately once that repository is available.",
+  "facets": {
+    "F.concept": {
+      "description": "Concept definition & relations (SKOS Concept equivalent). Includes senses[] (L4 Semantic/Definition)",
+      "legacy": "L4/L5/L8"
+    },
+    "F.form": {
+      "description": "Lexical form / lemma (LMF LexicalEntry equivalent). One form can reference multiple F.concept via senses[]",
+      "legacy": "L1"
+    },
+    "F.grammar": {
+      "description": "Part of speech, inflection forms",
+      "legacy": "L2"
+    },
+    "F.provenance": {
+      "description": "Dataset-level source/license metadata (PROV-O dct:source/dct:license)",
+      "legacy": "L0"
+    },
+    "F.embedding.e5small": {
+      "description": "multilingual-e5-small text embedding",
+      "dim": 384,
+      "modality": "text",
+      "environment": "local",
+      "requiresNetwork": false,
+      "toggleable": true,
+      "defaultEnabled": true,
+      "category": "embedding",
+      "legacy": "L6",
+      "modelId": "Xenova/multilingual-e5-small",
+      "geometry": "euclidean",
+      "queryPrefix": "query: ",
+      "passagePrefix": "passage: "
+    },
+    "F.embedding.e5base": {
+      "description": "multilingual-e5-base text embedding",
+      "dim": 768,
+      "modality": "text",
+      "environment": "local",
+      "requiresNetwork": false,
+      "toggleable": true,
+      "defaultEnabled": false,
+      "category": "embedding",
+      "modelId": "Xenova/multilingual-e5-base",
+      "geometry": "euclidean",
+      "queryPrefix": "query: ",
+      "passagePrefix": "passage: "
+    },
+    "F.embedding.e5large": {
+      "description": "multilingual-e5-large text embedding",
+      "dim": 1024,
+      "modality": "text",
+      "environment": "local",
+      "requiresNetwork": false,
+      "toggleable": true,
+      "defaultEnabled": false,
+      "category": "embedding",
+      "modelId": "Xenova/multilingual-e5-large",
+      "geometry": "euclidean",
+      "queryPrefix": "query: ",
+      "passagePrefix": "passage: "
+    },
+    "F.embedding.cloud-3072": {
+      "description": "Cloud text embedding provider, 3072-dim class (e.g. text-embedding-3-large). Placeholder id, actual provider set by user config",
+      "dim": 3072,
+      "modality": "text",
+      "environment": "cloud",
+      "requiresNetwork": true,
+      "toggleable": true,
+      "defaultEnabled": false,
+      "category": "embedding",
+      "note": "Exception to the local-first principle. Enabled only with the user's explicit consent.",
+      "modelId": null,
+      "geometry": "euclidean",
+      "queryPrefix": null,
+      "passagePrefix": null
+    },
+    "F.embedding.imagenet": {
+      "description": "ImageNet visual class hierarchy (WordNet-synset-keyed), cross-modal alignment",
+      "dim": null,
+      "modality": "image",
+      "environment": "local",
+      "requiresNetwork": false,
+      "toggleable": true,
+      "defaultEnabled": false,
+      "category": "cross-modal"
+    },
+    "P.scan": {
+      "description": "Aho-Corasick text scanning (Module 0 baseline, zero-overhead fallback target)",
+      "legacy": "L2/L3"
+    },
+    "P.wordnet.oewn": {
+      "description": "Open English WordNet backbone (~400k entries): synset relations, human-authored glosses",
+      "role": "Module 0 fallback source for relation-based disambiguation",
+      "onMiss": "skip",
+      "toggleable": true,
+      "defaultEnabled": true,
+      "category": "disambiguation"
+    },
+    "P.conceptnet": {
+      "description": "ConceptNet commonsense graph: weighted, multilingual, crowd+dictionary sourced",
+      "role": "Module 0 fallback source for commonsense relation edges (usedFor/capableOf/atLocation etc.)",
+      "onMiss": "skip",
+      "toggleable": true,
+      "defaultEnabled": false,
+      "category": "disambiguation",
+      "note": "confidence varies by edge; lower default trust than P.wordnet.oewn"
+    },
+    "G.policy": {
+      "description": "Policy rules referencing concept identifiers (abstract guideline). Guideline rules[] with severity: warning/info/hint map here.",
+      "legacy": "L7"
+    },
+    "G.rule": {
+      "description": "Strict enforcement rules (required fields, thresholds, hard constraints). Guideline rules[] with severity: error map here.",
+      "legacy": "L7"
+    },
+    "G.template": {
+      "description": "Document skeleton / slot templates (e.g. preset_clinical_templates.json). Scope: vect-or-generate output + vect-or-edit slot application (unverified, repo not yet obtained)",
+      "legacy": "L9"
+    }
+  },
+  "vocabularies": {
+    "_note": "Open vocabularies validated against the registry (not hardcoded schema enums). Append new values here; no schema change required.",
+    "relationTypes": [
+      "hypernym",
+      "hyponym",
+      "holoPart",
+      "meroPart",
+      "holoMember",
+      "meroMember",
+      "derivation",
+      "synonym",
+      "antonym",
+      "alsoSee",
+      "usedFor",
+      "capableOf",
+      "atLocation",
+      "causes",
+      "treats",
+      "contraindicatedWith",
+      "hasColorLabel",
+      "coOccursWith"
+    ],
+    "externalSources": [
+      "oewn",
+      "conceptnet",
+      "imagenet",
+      "wikidata",
+      "icd10cm",
+      "icd11",
+      "dsm5tr",
+      "jmix"
+    ],
+    "labelKinds": [
+      "pref",
+      "alt",
+      "hidden"
+    ]
+  }
+}

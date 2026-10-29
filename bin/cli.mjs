@@ -9,6 +9,9 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import { runDefaultJsonRecipe } from '../recipes/default_json_recipe.mjs';
 import { runImportEncryptRecipe } from '../recipes/import_encrypt_recipe.mjs';
+import { runEmbedV2Recipe } from '../recipes/embed_v2_recipe.mjs';
+import { isV2Document } from '../core/compiler/embedV2.mjs';
+import { validateKnowledgeBaseV2 } from '../core/validator.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -156,6 +159,48 @@ async function main() {
             console.error(`\x1b[31m[ERROR]\x1b[0m Failed to import and encrypt: ${e.message}`);
             process.exit(1);
         }
+        console.log('============================================================');
+        return;
+    }
+
+    let v2Doc = null;
+    try {
+        const parsed = JSON.parse(fs.readFileSync(options.input, 'utf8'));
+        if (isV2Document(parsed)) v2Doc = parsed;
+    } catch (e) {
+        // not readable JSON here: the default recipe reports the real error
+    }
+
+    if (v2Doc) {
+        console.log('============================================================');
+        console.log('       VectOrGenerate - Schema v2 Embedding Pass            ');
+        console.log('============================================================');
+        console.log(`Input:   ${options.input}`);
+        console.log(`Output:  ${options.output}`);
+        console.log(`Model:   ${options.model}`);
+        console.log('------------------------------------------------------------');
+        if (options.dryRun) {
+            const check = validateKnowledgeBaseV2(v2Doc);
+            if (!check.isValid) {
+                console.error(`\x1b[31m[ERROR]\x1b[0m v2 validation failed:\n  - ${check.errors.slice(0, 5).join('\n  - ')}`);
+                process.exit(1);
+            }
+            console.log(`\x1b[32m[PASS]\x1b[0m Validated ${v2Doc.concepts.length} concepts (${check.warnings.length} warnings).`);
+            console.log('============================================================');
+            return;
+        }
+        const r = await runEmbedV2Recipe({
+            doc: v2Doc,
+            outputPath: options.output,
+            modelName: options.model,
+            onProgress: (current, total) => {
+                console.log(`[${current}/${total}] (${Math.round((current / total) * 100)}%) embedded`);
+            }
+        });
+        console.log('------------------------------------------------------------');
+        console.log(`\x1b[32m[SUCCESS]\x1b[0m Embedded ${r.embedded} concepts (${r.skipped} skipped, facet ${r.facet}) in ${r.elapsedSec.toFixed(2)}s.`);
+        r.warnings.slice(0, 5).forEach(w => console.log(`  warning: ${w}`));
+        console.log(`Saved to: ${r.outputPath}`);
         console.log('============================================================');
         return;
     }

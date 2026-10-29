@@ -2,6 +2,11 @@
 // SPDX-License-Identifier: MIT
 // International Multilingual CSV & TSV Parser with Schema Normalization
 
+import { loadLegacyLayerSet } from '../../../core/registryLoader.mjs';
+import { SEMANTIC_LAYERS } from '../../../core/compiler/layerRegistry.mjs';
+
+const LEGACY_LAYERS = loadLegacyLayerSet();
+
 /**
  * Multilingual Column Alias Matrix for universal cross-language CSV header detection.
  */
@@ -76,7 +81,8 @@ export function parseAndNormalizeCsv(text, prefix = '#') {
 
     if (row.name) {
       const parsedLayer = parseInt(row.layer, 10);
-      const layer = !isNaN(parsedLayer) && parsedLayer >= 0 && parsedLayer <= 9 ? parsedLayer : 4;
+      const layer = !isNaN(parsedLayer) ? parsedLayer : 4;
+      const layerUnmapped = !isNaN(parsedLayer) && !LEGACY_LAYERS.has(parsedLayer);
       
       let synonyms = [];
       if (row.synonyms) {
@@ -92,7 +98,8 @@ export function parseAndNormalizeCsv(text, prefix = '#') {
         reading: row.reading || row.name,
         definition: row.definition || '',
         layer,
-        layerName: `L${layer} Semantic`,
+        ...(layerUnmapped ? { layerUnmapped: true } : {}),
+        layerName: SEMANTIC_LAYERS[layer] || `L${layer} Custom`,
         code: row.code || '',
         synonyms,
         inEditor: true,
@@ -161,14 +168,19 @@ export function parseAndNormalizeJson(text, prefix = '#') {
   }
 
   return rawList.map((item, idx) => {
-    const layer = typeof item.layer === 'number' && item.layer >= 0 && item.layer <= 9 ? item.layer : 4;
+    // ADR-0005: accept any legacy layer the registry maps (no hardcoded 0-9); unknown values are
+    // kept as-is and flagged instead of being silently rewritten to 4.
+    const hasLayer = typeof item.layer === 'number' && Number.isInteger(item.layer);
+    const layer = hasLayer ? item.layer : 4;
+    const layerUnmapped = hasLayer && !LEGACY_LAYERS.has(item.layer);
     return {
       id: item.id || `${prefix}${String(idx + 1).padStart(2, '0')}`,
       name: item.name || item.term || item.title || `Item #${idx + 1}`,
       reading: item.reading || item.pronunciation || item.name || '',
       definition: item.definition || item.meaning || item.desc || '',
       layer,
-      layerName: item.layerName || `L${layer} Semantic`,
+      ...(layerUnmapped ? { layerUnmapped: true } : {}),
+      layerName: item.layerName || SEMANTIC_LAYERS[layer] || `L${layer} Custom`,
       code: item.code || item.taxonomy || '',
       synonyms: Array.isArray(item.synonyms) ? item.synonyms : [],
       inEditor: true,

@@ -39,6 +39,22 @@
       ],
       "default": "cosine"
     },
+    "model": {
+      "type": "string",
+      "description": "Embedding model ID the vectors were computed with (e.g. 'Xenova/multilingual-e5-small'). Optional: absent means the model is unknown."
+    },
+    "spaceId": {
+      "type": "string",
+      "description": "Embedding space identifier (embedding facet id in registry/facets.json, e.g. 'F.embedding.e5small'). Builds of the same model share it. Vectors from different spaces are never comparable, whatever their dimension."
+    },
+    "prefixes": {
+      "type": "object",
+      "description": "Text prefixes used when the vectors were computed.",
+      "properties": {
+        "query": { "type": "string" },
+        "passage": { "type": "string" }
+      }
+    },
     "is_sanitized": {
       "type": "boolean",
       "description": "Whether raw source text and external URLs have been cleansed.",

@@ -5,6 +5,26 @@
 import config from '../../config.json' with { type: 'json' };
 import { validateRawData } from '../validator.mjs';
 import { normalizeEntity } from './layerRegistry.mjs';
+import { findEmbeddingFacetByModelId, loadFacetRegistry } from '../registryLoader.mjs';
+
+// schemaVersion = entities[] shape marker (fixed); config.version = build number (moves every commit).
+// Previously conflated under `version`, which made tests/compiler.test.mjs drift on every version bump.
+const LEGACY_ENTITIES_SCHEMA_VERSION = '0.3.0';
+
+/**
+ * Embedding-space fields of the KB header. `spaceId` is the embedding facet id (registry/facets.json), so two
+ * builds of the same model (Xenova/... and intfloat/...) share one space. A model with no facet gets no
+ * `spaceId`: the editor then treats the dictionary as "model unknown" and compares dimensions only.
+ */
+function embeddingHeader(modelName) {
+    const spaceId = findEmbeddingFacetByModelId(modelName);
+    const facet = spaceId ? loadFacetRegistry()[spaceId] : null;
+    return {
+        model: modelName,
+        ...(spaceId ? { spaceId } : {}),
+        ...(facet?.queryPrefix !== undefined ? { prefixes: { query: facet.queryPrefix, passage: facet.passagePrefix ?? '' } } : {})
+    };
+}
 
 /**
  * Compiles in-memory raw entities into a fully validated, 10-layer normalized Knowledge Base payload.
@@ -62,10 +82,12 @@ export async function compileData(rawInput, options = {}) {
 
         return {
             domain: detectedDomain,
-            version: config.version,
+            schemaVersion: LEGACY_ENTITIES_SCHEMA_VERSION,
+            version: config.version, // DEPRECATED alias (build number), not a schema-shape marker
             prefix: detectedPrefix,
             dimension: config.dimension,
             metric: 'cosine',
+            ...embeddingHeader(modelName),
             is_sanitized: false,
             fidelity_score: 100.0,
             entities: normalizedEntities
@@ -107,10 +129,12 @@ export async function compileData(rawInput, options = {}) {
 
     return {
         domain: detectedDomain,
-        version: config.version,
+        schemaVersion: LEGACY_ENTITIES_SCHEMA_VERSION,
+        version: config.version, // DEPRECATED alias (build number), not a schema-shape marker
         prefix: detectedPrefix,
         dimension,
         metric: 'cosine',
+        ...embeddingHeader(modelName),
         is_sanitized: false,
         fidelity_score: 100.0,
         entities: compiledEntities

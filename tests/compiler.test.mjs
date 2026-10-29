@@ -61,7 +61,7 @@ async function runTests() {
 
   assert.equal(result.domain, 'medical_test');
   assert.equal(result.prefix, '#');
-  assert.equal(result.version, '0.3.0');
+  assert.equal(result.schemaVersion, '0.3.0');
   assert.equal(result.dimension, 3);
   assert.equal(result.metric, 'cosine');
   assert.equal(result.is_sanitized, false);

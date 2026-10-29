@@ -45,8 +45,11 @@ export async function applyPrivacyTransforms(entities, options = {}) {
 
     const appliedTransforms = [];
 
+    // Tag a stable marker before any transform so ID reassignment (shuffle)
+    // never breaks downstream outlier-set lookups.
+    let processed = entities.map((item, idx) => ({ ...item, __origRef: idx }));
+
     // 1. Strip Provenance Metadata
-    let processed = entities;
     if (stripProv) {
         processed = stripProvenance(processed);
         appliedTransforms.push('strip_provenance');
@@ -67,10 +70,10 @@ export async function applyPrivacyTransforms(entities, options = {}) {
     // 4. Singularity Detection (for outlier noise boost)
     let outlierIdSet = new Set();
     if (boostSingularity && injectNoise) {
-        const { singularities } = detectSingularities(entities, { threshold: 0.55 });
+        const { singularities } = detectSingularities(processed, { threshold: 0.55 });
         for (const s of singularities) {
-            if (s.item && s.item.id) {
-                outlierIdSet.add(s.item.id);
+            if (s.item && s.item.__origRef !== undefined) {
+                outlierIdSet.add(s.item.__origRef);
             }
         }
     }
@@ -80,7 +83,7 @@ export async function applyPrivacyTransforms(entities, options = {}) {
         processed = processed.map(item => {
             if (!item.vector || item.vector.length === 0) return item;
             
-            const isOutlier = outlierIdSet.has(item.id);
+            const isOutlier = outlierIdSet.has(item.__origRef);
             const itemEpsilon = isOutlier ? (epsilon * boostMultiplier) : epsilon;
 
             const noisyVector = injectSphericalNoise(item.vector, {
@@ -108,7 +111,7 @@ export async function applyPrivacyTransforms(entities, options = {}) {
     }
 
     return {
-        entities: processed,
+        entities: processed.map(({ __origRef, ...rest }) => rest),
         ...(metrics ? { metrics } : {}),
         audit: {
             preset: options.preset || null,
