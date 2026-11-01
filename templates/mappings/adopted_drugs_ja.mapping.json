@@ -1,0 +1,8 @@
+{
+  "domain": "adopted_drugs",
+  "input": "../../inputs/sangen_adopted_drugs.json",
+  "fields": { "id": "id", "name": "name", "category": "category" },
+  "layer": 4,
+  "vectorText": ["name", "category"],
+  "metadata": { "route": "route", "unit": "unit", "price": "price", "spec": "spec", "note": "note", "qlife": "qlife", "kegg": "kegg" }
+}

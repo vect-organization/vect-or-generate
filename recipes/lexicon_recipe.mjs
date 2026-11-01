@@ -10,9 +10,12 @@
 // any language or domain. Mapping keys (paths in the mapping are relative to the mapping file):
 //   domain, taxonomyCode, input (overridden by --input), recordsPath (dot path to the record array, empty = top level),
 //   fields      { id, name, reading, definition, synonyms, code, category } -> source field names
+//   nameParts   [sourceField, ...] joined with a space into the name instead of fields.name (blank parts are skipped)
 //   layer       legacy layer number for every record (default 4)
 //   vectorText  entity fields joined into the embedded passage (default: name, synonyms, definition)
-//   metadata    { outputKey: sourceField } copied into each entity's metadata
+//   metadata    { outputKey: sourceField } copied into each entity's metadata (source fields may be dot paths)
+//   joins       [{ input, recordsPath, by, as }] attach a second file: the record whose key (object key, or `_key`)
+//               equals the main record's field `by` is added to the main record under `as`
 //   renameKeys  { sourceKey: outputKey } applied to keys inside metadata values (nested objects)
 //   ruleSources [{ dir, file?, rules: { ruleId: { severity, category, minLength? } } }]
 //               -> term rules taken from criteria files whose generalRules[] carry badExamples[]
@@ -25,6 +28,29 @@ import { packageArtifactBundle, exportArtifactsToDisk } from '../core/packager/i
 import { encryptKnowledgeBase } from '../core/vault/index.js';
 
 const getPath = (obj, dotPath) => (dotPath ? dotPath.split('.').reduce((o, k) => (o == null ? o : o[k]), obj) : obj);
+/** A record list from an array, or from an object keyed by id (each value gets its key as `_key`). */
+export function toRecordList(value) {
+    if (Array.isArray(value)) return value;
+    if (value && typeof value === 'object') {
+        return Object.entries(value).map(([key, v]) => (v && typeof v === 'object' && !Array.isArray(v) ? { _key: key, ...v } : { _key: key, _value: v }));
+    }
+    return [];
+}
+
+/** Attaches the joined records to the main records (see `joins` in the header). */
+export function applyJoins(records, joins, mappingDir, readJson = (p) => JSON.parse(fs.readFileSync(p, 'utf8'))) {
+    let out = records;
+    for (const j of joins || []) {
+        const joined = toRecordList(getPath(readJson(path.resolve(mappingDir, j.input)), j.recordsPath || ''));
+        const byKey = new Map(joined.map((r) => [String(r._key), r]));
+        out = out.map((rec) => {
+            const hit = byKey.get(String(getPath(rec, j.by)));
+            return hit ? { ...rec, [j.as]: hit } : rec;
+        });
+    }
+    return out;
+}
+
 const isBlank = (v) => v === undefined || v === null || v === '' || (Array.isArray(v) && v.length === 0)
     || (typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === 0);
 
@@ -44,20 +70,23 @@ export function mapRecords(records, mapping) {
     const renameKeys = mapping.renameKeys || {};
     const vectorText = mapping.vectorText || ['name', 'synonyms', 'definition'];
     return records.map((rec, idx) => {
-        const synonyms = [].concat(rec[f.synonyms] || []).filter(Boolean).map(String);
+        const pick = (key) => (key ? getPath(rec, key) : undefined);
+        const synonyms = [].concat(pick(f.synonyms) || []).filter(Boolean).map(String);
         const entity = {
-            id: String(rec[f.id] ?? `#${String(idx + 1).padStart(4, '0')}`),
-            name: String(rec[f.name] ?? ''),
-            reading: String(rec[f.reading] ?? ''),
-            definition: String(rec[f.definition] ?? ''),
+            id: String(pick(f.id) ?? `#${String(idx + 1).padStart(4, '0')}`),
+            name: Array.isArray(mapping.nameParts)
+                ? mapping.nameParts.map((k) => pick(k)).filter((v) => !isBlank(v)).map((v) => [].concat(v).join(' ')).join(' ')
+                : String(pick(f.name) ?? ''),
+            reading: String(pick(f.reading) ?? ''),
+            definition: String(pick(f.definition) ?? ''),
             synonyms,
-            code: String(rec[f.code] ?? ''),
-            category: String(rec[f.category] || 'General'),
+            code: String(pick(f.code) ?? ''),
+            category: String(pick(f.category) || 'General'),
             layer: mapping.layer ?? 4,
             metadata: {}
         };
         for (const [outKey, srcKey] of Object.entries(mapping.metadata || {})) {
-            const v = rec[srcKey];
+            const v = getPath(rec, srcKey);
             if (!isBlank(v)) entity.metadata[outKey] = renameDeep(v, renameKeys);
         }
         entity.text_for_vector = vectorText
@@ -106,7 +135,7 @@ export async function runLexiconRecipe({ mappingPath, inputPath, outDir, passwor
     const mapping = JSON.parse(fs.readFileSync(mappingPath, 'utf8'));
     // --input is relative to the working directory; `input` in the mapping is relative to the mapping file
     const input = inputPath ? path.resolve(inputPath) : path.resolve(mappingDir, mapping.input || '');
-    const records = getPath(JSON.parse(fs.readFileSync(input, 'utf8')), mapping.recordsPath || '');
+    const records = applyJoins(toRecordList(getPath(JSON.parse(fs.readFileSync(input, 'utf8')), mapping.recordsPath || '')), mapping.joins, mappingDir);
     if (!Array.isArray(records) || records.length === 0) throw new Error(`no records at "${mapping.recordsPath || '(top level)'}" in ${input}`);
     const domain = mapping.domain || path.basename(input, path.extname(input));
 

@@ -1,0 +1,32 @@
+{
+  "domain": "mental_health_law",
+  "taxonomyCode": "JP-Law-Mental-Health-Welfare",
+  "input": "../../../sangen/精神保健福祉法/data/精神保健福祉法.json",
+  "recordsPath": "articles",
+  "joins": [
+    {
+      "input": "../../../sangen/精神保健福祉法/data/精神保健福祉法_要約.json",
+      "recordsPath": "summaries",
+      "by": "key",
+      "as": "summary"
+    }
+  ],
+  "fields": {
+    "id": "key",
+    "name": "title",
+    "synonyms": "caption",
+    "definition": "summary.gist",
+    "code": "title",
+    "category": "chapter_title"
+  },
+  "nameParts": ["title", "caption"],
+  "layer": 4,
+  "vectorText": ["name", "definition"],
+  "metadata": {
+    "text": "text",
+    "points": "summary.points",
+    "detail": "summary.detail",
+    "chapter": "chapter_title",
+    "section": "section_title"
+  }
+}

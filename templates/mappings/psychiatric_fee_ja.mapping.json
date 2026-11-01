@@ -1,0 +1,31 @@
+{
+  "domain": "psychiatric_fee",
+  "taxonomyCode": "JP-Fee-Schedule",
+  "input": "../../../sangen/診療報酬/data/点数表.json",
+  "recordsPath": "items",
+  "joins": [
+    { "input": "../../../sangen/診療報酬/data/算定通知.json", "by": "code", "as": "notice" },
+    { "input": "../../../sangen/診療報酬/data/施設基準.json", "by": "code", "as": "facility" }
+  ],
+  "fields": {
+    "id": "code",
+    "name": "name",
+    "definition": "text",
+    "code": "code_disp",
+    "category": "category"
+  },
+  "layer": 4,
+  "vectorText": ["name", "definition", "part", "section"],
+  "metadata": {
+    "part": "part",
+    "section": "section",
+    "unit": "unit",
+    "page": "page",
+    "psychiatric": "psychiatric",
+    "psychiatricReason": "psychiatric_reason",
+    "noticeHeading": "notice.heading",
+    "notice": "notice.text",
+    "facilityStandard": "facility.kokuji",
+    "facilityNotice": "facility.tsuchi"
+  }
+}

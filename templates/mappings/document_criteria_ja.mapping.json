@@ -1,0 +1,8 @@
+{
+  "domain": "document_criteria",
+  "input": "../../inputs/sangen_document_criteria.json",
+  "fields": { "id": "id", "name": "name", "definition": "definition", "category": "category" },
+  "layer": 4,
+  "vectorText": ["name", "details"],
+  "metadata": { "field": "field", "details": "details", "returnReason": "returnReason", "severity": "severity" }
+}

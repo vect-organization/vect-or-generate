@@ -1,0 +1,9 @@
+{
+  "domain": "symptom_suggest",
+  "taxonomyCode": "ICD-10",
+  "input": "../../inputs/sangen_symptom_suggest.json",
+  "fields": { "id": "id", "name": "name", "definition": "definition", "code": "code", "category": "category" },
+  "layer": 4,
+  "vectorText": ["name", "definition"],
+  "metadata": { "groupName": "groupName", "pension": "pension", "independence": "independence" }
+}

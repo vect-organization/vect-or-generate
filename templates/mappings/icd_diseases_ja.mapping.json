@@ -1,0 +1,9 @@
+{
+  "domain": "icd_diseases",
+  "taxonomyCode": "ICD-10",
+  "input": "../../inputs/sangen_icd_diseases.json",
+  "fields": { "id": "id", "name": "name", "synonyms": "synonyms", "code": "code", "category": "category" },
+  "layer": 4,
+  "vectorText": ["name", "synonyms"],
+  "metadata": { "codeSize": "size" }
+}
