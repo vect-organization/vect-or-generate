@@ -4,13 +4,21 @@
 
 import { argon2id } from "hash-wasm";
 
-const DEFAULT_APP_SECRET = "VECTOR_APP_DEFAULT_SECRET_2026";
+// The Studio build injects __VECT_SHARED_APP_SECRET__ (see studio/vite.config.js); Node reads the environment.
+// Must match the secret in core/vault/index.js.
+function sharedAppSecret() {
+  if (typeof __VECT_SHARED_APP_SECRET__ !== "undefined") return __VECT_SHARED_APP_SECRET__;
+  return globalThis.process?.env?.VECTOR_SHARED_APP_SECRET || "";
+}
+
+// Public secret of earlier builds, tried only when decrypting so existing .venc files keep opening.
+const LEGACY_APP_SECRET = "VECTOR_APP_DEFAULT_SECRET_2026";
 
 /**
  * Derives an AES-256-GCM key from password and salt using Argon2id + HMAC-SHA256.
  * Browser & Node.js environment compatible.
  */
-export async function deriveKeyWeb(userPassword, salt, appSecret = DEFAULT_APP_SECRET) {
+export async function deriveKeyWeb(userPassword, salt, appSecret) {
   let blendedHex = "";
   
   if (typeof crypto !== "undefined" && crypto.subtle) {
@@ -58,9 +66,12 @@ export async function deriveKeyWeb(userPassword, salt, appSecret = DEFAULT_APP_S
  * @param {string} [appSecret]
  * @returns {Promise<Uint8Array>}
  */
-export async function encryptKnowledgeBaseWeb(jsonData, userPassword, appSecret = DEFAULT_APP_SECRET) {
+export async function encryptKnowledgeBaseWeb(jsonData, userPassword, appSecret = sharedAppSecret()) {
   if (!userPassword) {
     throw new Error("Password is required for encryption.");
+  }
+  if (!appSecret) {
+    throw new Error("VECTOR_SHARED_APP_SECRET is not set. Encryption needs it.");
   }
 
   const salt = new Uint8Array(16);
@@ -122,11 +133,25 @@ export async function encryptKnowledgeBaseWeb(jsonData, userPassword, appSecret 
  * @param {string} [appSecret]
  * @returns {Promise<Object>}
  */
-export async function decryptKnowledgeBaseWeb(fileData, userPassword, appSecret = DEFAULT_APP_SECRET) {
+export async function decryptKnowledgeBaseWeb(fileData, userPassword, appSecret) {
   const magic = new TextDecoder().decode(fileData.subarray(0, 4));
   if (magic !== "VENC") {
     throw new Error("Invalid file format: Missing VENC header.");
   }
+
+  const secrets = appSecret ? [appSecret] : [sharedAppSecret(), LEGACY_APP_SECRET].filter(Boolean);
+  let lastError = null;
+  for (const secret of secrets) {
+    try {
+      return await decryptWithSecret(fileData, userPassword, secret);
+    } catch (err) {
+      lastError = err; // wrong password or a different secret: try the next one
+    }
+  }
+  throw lastError;
+}
+
+async function decryptWithSecret(fileData, userPassword, appSecret) {
 
   const salt = fileData.subarray(4, 20);
   const iv = fileData.subarray(20, 32);

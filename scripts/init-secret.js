@@ -4,6 +4,10 @@ import crypto from 'crypto';
 
 const envPath = path.resolve(process.cwd(), '.env');
 
+if (!(fs.existsSync(envPath) && fs.readFileSync(envPath, 'utf8').includes('VECTOR_SHARED_APP_SECRET='))) {
+  console.warn('VECTOR_SHARED_APP_SECRET is not in .env. It must be the same value in vect-or-edit and vect-or-generate, so it is not generated here.');
+}
+
 if (fs.existsSync(envPath)) {
   const currentEnv = fs.readFileSync(envPath, 'utf8');
   if (currentEnv.includes('VECTOR_APP_SECRET=')) {

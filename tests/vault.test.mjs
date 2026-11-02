@@ -5,6 +5,8 @@ import crypto from 'node:crypto';
 import { argon2id } from 'hash-wasm';
 import { encryptKnowledgeBaseWeb, decryptKnowledgeBaseWeb } from '../core/vault/webVault.js';
 
+process.env.VECTOR_SHARED_APP_SECRET ||= 'shared-secret-for-test';
+
 
 test('Vault: Node encrypt -> Node decrypt', async () => {
     const data = { domain: 'medical', entities: [{ id: '#01', name: 'Test' }] };
@@ -57,6 +59,25 @@ test('Vault: legacy per-machine secret still decrypts', async () => {
     const body = Buffer.concat([cipher.update(JSON.stringify(data), 'utf8'), cipher.final()]);
     const file = Buffer.concat([Buffer.from('VENC'), salt, iv, cipher.getAuthTag(), body]);
     assert.deepEqual(await decryptKnowledgeBase(file, password), data);
+});
+
+// The public secret of earlier builds opens old files, and nothing new may use it
+test('Vault: legacy public secret decrypts in Node and Web', async () => {
+    const data = { domain: 'legacy-public' };
+    const enc = await encryptKnowledgeBaseWeb(data, 'oldFilePassword', 'VECTOR_APP_DEFAULT_SECRET_2026');
+    assert.deepEqual(await decryptKnowledgeBase(Buffer.from(enc), 'oldFilePassword'), data);
+    assert.deepEqual(await decryptKnowledgeBaseWeb(enc, 'oldFilePassword'), data);
+});
+
+test('Vault: encryption stops when the shared secret is missing', async () => {
+    const saved = process.env.VECTOR_SHARED_APP_SECRET;
+    delete process.env.VECTOR_SHARED_APP_SECRET;
+    try {
+        await assert.rejects(() => encryptKnowledgeBase({ a: 1 }, 'pw'), /VECTOR_SHARED_APP_SECRET/);
+        await assert.rejects(() => encryptKnowledgeBaseWeb({ a: 1 }, 'pw'), /VECTOR_SHARED_APP_SECRET/);
+    } finally {
+        process.env.VECTOR_SHARED_APP_SECRET = saved;
+    }
 });
 
 test('Vault: wrong password is rejected', async () => {
